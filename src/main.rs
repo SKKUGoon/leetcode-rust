@@ -120,9 +120,95 @@ pub fn longest_common_prefix(strs: Vec<String>) -> String {
     return standard[0..res].to_owned()
 }
 
+#[allow(dead_code)]
+pub fn is_valid(s: String) -> bool {
+    if s.len() <= 1 {
+        return false
+    }
+
+    let bracket_pair = HashMap::from([
+        (')', '('), ('}', '{'), (']', '['),
+    ]);
+    let mut bracket_open = HashMap::from([
+        ('(', 0), ('{', 0), ('[', 0)
+    ]);
+    let mut open_q = vec!['s'];
+    
+    for i in s.chars().into_iter() {
+        let is_open = bracket_open.get_mut(&i);
+        match is_open {
+            None => {
+                // It's a closing bracket. Find its `starting pair` 
+                let my_pair = bracket_pair.get(&i).unwrap();
+                // pop from open_q and compare
+                let recent = open_q.pop().unwrap();
+                
+                if recent == 's' {
+                    // never even opened
+                    return false
+                } else if recent != *my_pair {
+                    // wrong closing order
+                    return false
+                } else {
+                    // log minus one
+                    let opened = bracket_open.get(my_pair).unwrap();
+                    if *opened == 0 {
+                        // too much closing
+                        return false
+                    }
+                    *bracket_open.get_mut(my_pair).unwrap() += -1;
+                }
+            },
+            Some(v) => {
+                // It's a starting bracket. 
+                // log plus one, and log character into the queue
+                *v += 1;
+                open_q.push(i);
+            }
+        }
+    }
+    if open_q.len() > 1 {
+        return false
+    }
+    return true
+}
+
+// 21. Unable to solve
+// List of List - 
+// How to solve Option<Box<...>>
+
+
+// Basic Memoization
+#[allow(dead_code)]
+fn fib(n: u128) -> u128 {
+    if n <=1 {
+        return 1;
+    } else {
+        return fib(n - 1) + fib(n - 2)
+    }
+}
+
+#[allow(dead_code)]
+fn fib_memo(n: u128) -> u128 {
+    let mut memo: Vec<u128> = Vec::new();
+    for i in 0..(n+1) {
+        if i <= 1 {
+            memo.push(1);
+            continue
+        }
+        let fib_num = memo[i as usize -1] + memo[i as usize - 2];
+        memo.push(fib_num);
+    }
+
+    return memo.pop().unwrap()
+}
 
 fn main() {
-    // problem 1
-    println!("Leetcode problem 1");
-
+    // problem memo
+    let target_num = 100u128;
+    println!("Leetcode problem 6");
+    // let f1 = fib(target_num);
+    // println!("fib {} is {}", target_num, f1);
+    let f2 = fib_memo(target_num);
+    println!("fib {} is {}", target_num, f2);
 }
