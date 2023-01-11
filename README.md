@@ -7,5 +7,5 @@ To practice rust's basic grammar, 2023 new year resolution is to solve at least 
 | ----|--------|
 | 2023-01-08 | 4 |
 | 2023-01-09 | 3 |
-
+| 2023-01-11 | 6 |
 

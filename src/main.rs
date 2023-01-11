@@ -203,12 +203,130 @@ fn fib_memo(n: u128) -> u128 {
     return memo.pop().unwrap()
 }
 
+#[allow(dead_code)]
+pub fn remove_duplicates(nums: &mut Vec<i32>) -> i32 {
+    // Comb through sorted list, save each number
+    // If the number is the same remove
+    let mut isdup: Option<&i32> = None;
+    let smaller = nums[0] - 1;
+    let mut changed = 0i32;
+    for i in nums.iter_mut() {
+        match isdup {
+            None => {
+                isdup = Some(i);
+                changed += 1
+            },
+            Some(val) => {
+                if i != val {
+                    // Different number. Update `isdup`
+                    isdup = Some(i);
+                    changed += 1
+                } else {
+                    // Same number. Update it with `smaller`
+                    *i = smaller;
+                }
+            }
+        }
+    }
+
+    // Duplicate numbers are all transformed into `smaller`
+    // Sort and erase
+    nums.sort();
+    nums.retain(|&x| x != smaller);
+    return changed
+
+    // There's a dedicated function!
+    // nums.dedup();
+    // nums.len() as i32
+}
+
+#[allow(dead_code)]
+pub fn remove_element(nums: &mut Vec<i32>, val: i32) -> i32 {
+    nums.retain(|&x| x != val);
+    return nums.len() as i32
+}
+
+#[allow(dead_code)]
+pub fn search_insert(nums: Vec<i32>, target: i32) -> i32 {
+    for (i, val) in nums.iter().enumerate() {
+        if val == &target {
+            return i as i32
+        } else if val > &target {
+            return i as i32
+        } 
+    };
+    return nums.len() as i32
+}
+
+#[allow(dead_code)]
+pub fn length_of_last_word(s: String) -> i32 {
+    let mut continuous = 0i32;
+    let mut blank = false;
+    for i in s.chars().into_iter() {
+        if i == ' ' {
+            blank = true;
+        } else {
+            if blank {
+                continuous = 0;
+            }
+            blank = false;
+            continuous += 1;
+        }
+    }
+    return continuous
+}
+
+#[allow(dead_code)]
+pub fn plus_one(digits: Vec<i32>) -> Vec<i32> {
+    let mut push_one = 0usize;
+    let mut result: Vec<i32> = Vec::new();
+    for (i, val) in digits.iter().rev().enumerate() {
+        if i == push_one {
+            if val + 1 == 10 {
+                result.push(0);
+                push_one += 1 as usize;
+            } else {
+                result.push(val + 1);
+            }
+            continue
+        }
+        result.push(*val);
+    }
+    if push_one == result.len() {
+        result.push(1);
+    }
+    return result.into_iter().rev().collect::<Vec<i32>>()
+}
+
+#[allow(dead_code)]
+pub fn my_sqrt(x: i32) -> i32 {
+    if x <= 1 {
+        return x
+    }
+    let mut i = 1u128;
+    let mut sq = i * i;
+    while x as u128 >= sq {
+        i += 1;
+        sq = i * i;
+    }
+    return (i - 1) as i32
+}
+
+// Time efficient answer
+// pub fn my_sqrt(x: i32) -> i32 {
+//     let (mut low, mut high) = (0_u64, x as u64 / 2 + 1);
+//     while low < high {
+//         let mid = low + (high - low + 1) / 2;
+//         if mid * mid > x as u64 { high = mid - 1; } else { low = mid; }
+//     }
+
+//     low as i32
+// }
+
 fn main() {
     // problem memo
-    let target_num = 100u128;
-    println!("Leetcode problem 6");
-    // let f1 = fib(target_num);
-    // println!("fib {} is {}", target_num, f1);
-    let f2 = fib_memo(target_num);
-    println!("fib {} is {}", target_num, f2);
+    println!("Leetcode problem 8");
+    let t1 = vec![9, 9];
+    let c = plus_one(t1);
+    println!("{:?}", c);
 }
