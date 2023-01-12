@@ -323,10 +323,156 @@ pub fn my_sqrt(x: i32) -> i32 {
 //     low as i32
 // }
 
+
+#[allow(dead_code)]
+pub fn merge(nums1: &mut Vec<i32>, m: i32, nums2: &mut Vec<i32>, n: i32) {
+    let mut res: Vec<i32> = Vec::new();
+    let (mut id1, mut id2) = (0i32, 0i32);
+    loop {
+        if id1 == m {
+            // end of nums1. push remaining elements of nums2 to result
+            res.extend_from_slice(&nums2[id2 as usize..n as usize]);
+            break
+        } 
+        if id2 == n {
+            res.extend_from_slice(&nums1[id1 as usize..m as usize]);
+            break
+        }
+        if nums1[id1 as usize] < nums2[id2 as usize] {
+            res.push(nums1[id1 as usize]);
+            id1 += 1;
+        } else {
+            res.push(nums2[id2 as usize]);
+            id2 += 1;
+        }
+
+
+    }
+    println!("{:?}", res);
+    for (i, v) in res.iter_mut().enumerate() {
+        nums1[i] = *v;
+    }
+    println!("{:?}", nums1);
+}
+
+// Efficient looking answer
+// pub fn merge(nums1: &mut Vec<i32>, m: i32, nums2: &mut Vec<i32>, n: i32) {
+//     nums1.truncate(m as usize);
+//     nums1.extend_from_slice(nums2);
+//     nums1.sort();
+// }
+
+#[allow(dead_code)]
+#[derive(Debug, PartialEq, Eq)]
+pub struct TreeNode {
+  pub val: i32,
+  pub left: Option<Rc<RefCell<TreeNode>>>,
+  pub right: Option<Rc<RefCell<TreeNode>>>,
+}
+
+#[allow(dead_code)]
+impl TreeNode {
+  #[inline]
+  pub fn new(val: i32) -> Self {
+    TreeNode {
+      val,
+      left: None,
+      right: None
+    }
+  }
+}
+#[allow(dead_code)]
+use std::rc::Rc;
+use std::cell::RefCell;
+// impl Solution {
+#[allow(dead_code)]
+pub fn inorder_traversal(root: Option<Rc<RefCell<TreeNode>>>) -> Vec<i32> {
+    fn h(node: &Option<Rc<RefCell<TreeNode>>>, ret: &mut Vec<i32>) {
+        if let Some(v) = node {
+            let v = v.borrow();
+
+            // traverse left
+            h(&v.left, ret);
+            // push root
+            ret.push(v.val);
+            // traverse right
+            h(&v.right, ret);
+        }
+    }
+
+    let mut ret: Vec<i32> = Vec::new();
+    if let Some(v) = root {
+        h(&Some(v), &mut ret);
+    }
+    return ret
+}
+// }
+
+pub fn is_same_tree(p: Option<Rc<RefCell<TreeNode>>>, q: Option<Rc<RefCell<TreeNode>>>) -> bool {
+    fn h(node: &Option<Rc<RefCell<TreeNode>>>, ret: &mut Vec<String>, rl: char) {
+        // if let Enum Component = Enum
+        if let Some(v) = node {
+            let v = v.borrow();
+            h(&v.left, ret, 'l');
+            let val = format!("{}{}", rl, v.val);
+            ret.push(val);
+            h(&v.right, ret, 'r');
+        } 
+    }
+    let mut ret1: Vec<String> = Vec::new();
+    let mut ret2: Vec<String> = Vec::new();
+    if let Some(v) = p {
+        h(&Some(v), &mut ret1, 'c');
+    };
+    if let Some(v) = q {
+        h(&Some(v), &mut ret2, 'c');
+    };
+
+    if ret1.len() != ret2.len() {
+        return false
+    };
+
+    // Check ret1 -> ret2
+    for i in ret1.iter().zip(&ret2) {
+        let (ele1, ele2) = i;
+        if ele1 != ele2 {
+            return false
+        }
+    };
+
+    return true
+}
+
+#[allow(dead_code)]
+fn if_lets() {
+    // If `match` is exhaustive to write, we can use if let
+    let number = Some(7);
+    let letter: Option<i32> = None;
+
+    if let Some(i) = number {
+        println!("Matched {:?}", i);
+    }
+    if let Some(i) = letter {
+        println!("Matched {:?}", i);
+    } else {
+        println!("Didn't match a number");
+    }
+    // in the same way it can match any enums
+}
+
+
 fn main() {
     // problem memo
-    println!("Leetcode problem 8");
-    let t1 = vec![9, 9];
-    let c = plus_one(t1);
-    println!("{:?}", c);
+    let mut tree1 = TreeNode::new(1);
+    let tree1l = TreeNode::new(1);
+    tree1.left = Some(Rc::new(RefCell::new(tree1l)));
+    
+    let mut tree2 = TreeNode::new(1);
+    let tree2r = TreeNode::new(1);
+    tree2.right = Some(Rc::new(RefCell::new(tree2r)));
+    
+    let p = Some(Rc::new(RefCell::new(tree1)));
+    let q = Some(Rc::new(RefCell::new(tree2)));
+    let t = is_same_tree(p, q);
+    println!("{}", t)
 }
