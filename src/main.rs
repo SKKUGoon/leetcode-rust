@@ -460,19 +460,84 @@ fn if_lets() {
     // in the same way it can match any enums
 }
 
+pub fn sum_index_generate(target: usize) -> Vec<Vec<usize>> {
+    let s: Vec<usize> = (1..=target).collect();
+    let mut result: Vec<Vec<usize>> = Vec::new();
+    for i in s.into_iter().enumerate() {
+        result.push(vec![i.0, i.1]);
+    }
+    return result
+}
+
+pub fn generate(num_rows: i32) -> Vec<Vec<i32>> {
+    let mut memo: Vec<Vec<i32>> = Vec::new();
+    for i in 0..num_rows {
+        if i == 0 {
+            memo.push(vec![1])
+        } else if i == 1 {
+            memo.push(vec![1, 1])
+        } else {
+            let sum_idx = sum_index_generate((i-1) as usize);
+            let bef = &memo[(i-1) as usize];
+            
+            // Iterate
+            let mut row_result = vec![1];
+            for idx in sum_idx.iter() {
+                println!("{:?}", idx);
+                row_result.push(bef[idx[0]] + bef[idx[1]]);
+            }
+            row_result.push(1);
+
+            memo.push(row_result);
+        }
+    }
+    return memo
+}
+
+use std::cmp;
+
+pub fn max_profit(prices: Vec<i32>) -> i32 {
+    let mut current_min: Option<&i32> = None;
+    let mut profit: i32 = 0;
+    for stock in prices.iter() {
+        let prc = stock;
+        match current_min {
+            None => {
+                current_min = Some(prc);
+                profit = cmp::max(profit, 0);
+            },
+            Some(p) => {
+                if p > prc {
+                    // found a smaller price
+                    current_min = Some(prc);
+                    profit = cmp::max(profit, 0);
+                } else {
+                    profit = cmp::max(profit, prc-p);
+                }
+            }
+        }
+    }
+    return profit
+}
+
 
 fn main() {
-    // problem memo
-    let mut tree1 = TreeNode::new(1);
-    let tree1l = TreeNode::new(1);
-    tree1.left = Some(Rc::new(RefCell::new(tree1l)));
+    // Tree problem memo
+    // let mut tree1 = TreeNode::new(1);
+    // let tree1l = TreeNode::new(1);
+    // tree1.left = Some(Rc::new(RefCell::new(tree1l)));
     
-    let mut tree2 = TreeNode::new(1);
-    let tree2r = TreeNode::new(1);
-    tree2.right = Some(Rc::new(RefCell::new(tree2r)));
+    // let mut tree2 = TreeNode::new(1);
+    // let tree2r = TreeNode::new(1);
+    // tree2.right = Some(Rc::new(RefCell::new(tree2r)));
     
-    let p = Some(Rc::new(RefCell::new(tree1)));
-    let q = Some(Rc::new(RefCell::new(tree2)));
-    let t = is_same_tree(p, q);
-    println!("{}", t)
+    let test1 = vec![7, 1, 5, 3, 6, 4];
+    let test2 = vec![7, 2, 5, 3, 6, 1];
+    let test3 = vec![7, 6, 5, 4, 4, 3];
+    let t1 = max_profit(test1);
+    let t2 = max_profit(test2);
+    let t3 = max_profit(test3);
+    println!("{:?}", t1);
+    println!("{:?}", t2);
+    println!("{:?}", t3);
 }
