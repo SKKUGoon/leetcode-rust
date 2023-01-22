@@ -1,3 +1,4 @@
+use std::cmp;
 use std::collections::HashMap;
 
 #[allow(dead_code)]
@@ -460,6 +461,7 @@ fn if_lets() {
     // in the same way it can match any enums
 }
 
+#[allow(dead_code)]
 pub fn sum_index_generate(target: usize) -> Vec<Vec<usize>> {
     let s: Vec<usize> = (1..=target).collect();
     let mut result: Vec<Vec<usize>> = Vec::new();
@@ -469,6 +471,7 @@ pub fn sum_index_generate(target: usize) -> Vec<Vec<usize>> {
     return result
 }
 
+#[allow(dead_code)]
 pub fn generate(num_rows: i32) -> Vec<Vec<i32>> {
     let mut memo: Vec<Vec<i32>> = Vec::new();
     for i in 0..num_rows {
@@ -494,8 +497,8 @@ pub fn generate(num_rows: i32) -> Vec<Vec<i32>> {
     return memo
 }
 
-use std::cmp;
 
+#[allow(dead_code)]
 pub fn max_profit(prices: Vec<i32>) -> i32 {
     let mut current_min: Option<&i32> = None;
     let mut profit: i32 = 0;
@@ -520,6 +523,25 @@ pub fn max_profit(prices: Vec<i32>) -> i32 {
     return profit
 }
 
+#[allow(dead_code)]
+pub fn is_palindrome_125(s: String) -> bool {
+    // processable string conversion
+    let s_lower = s.to_lowercase()
+        .replace(|x: char| !x.is_alphanumeric(), "");
+    println!("{}", s_lower);
+
+    // read the index forward -> O(1)
+    // read the string backward -> O(1)
+    for (idx, c) in s_lower.chars().rev().into_iter().enumerate() {
+        let b = s_lower.as_bytes()[idx] as char;
+        if c != b {
+            return false
+        }
+    }
+    return true
+}
+
+
 
 fn main() {
     // Tree problem memo
@@ -531,13 +553,7 @@ fn main() {
     // let tree2r = TreeNode::new(1);
     // tree2.right = Some(Rc::new(RefCell::new(tree2r)));
     
-    let test1 = vec![7, 1, 5, 3, 6, 4];
-    let test2 = vec![7, 2, 5, 3, 6, 1];
-    let test3 = vec![7, 6, 5, 4, 4, 3];
-    let t1 = max_profit(test1);
-    let t2 = max_profit(test2);
-    let t3 = max_profit(test3);
+    let test1 = String::from(" ");
+    let t1 = is_palindrome_125(test1);
     println!("{:?}", t1);
-    println!("{:?}", t2);
-    println!("{:?}", t3);
 }
